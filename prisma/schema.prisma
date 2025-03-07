@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model todo {
+model Todo {
   id          String   @id @default(uuid())
   description String
   complete    Boolean  @default(false)

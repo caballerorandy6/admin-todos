@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import TodosGrid from "@/todos/components/TodosGrid";
 
 //mr para generar metadata
 export const metadata = {
@@ -6,17 +7,14 @@ export const metadata = {
   description: "SEO Title",
 };
 
-const ServerTodosPage = async () => {
+const RestTodosPage = async () => {
   const todos = await prisma.todo.findMany({ orderBy: { description: "asc" } });
 
   return (
     <div>
-      {/*  TODO: Formulario para agregar */}
-      {todos.map((todo) => (
-        <div key={todo.id}>{todo.description}</div>
-      ))}
+      <TodosGrid todos={todos} />
     </div>
   );
 };
 
-export default ServerTodosPage;
+export default RestTodosPage;

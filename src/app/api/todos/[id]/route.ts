@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-import { todo } from "@prisma/client";
+import { Todo } from "@prisma/client";
 import * as yup from "yup";
 
 interface Params {
@@ -10,7 +10,7 @@ interface Params {
 }
 
 //Fucion para evitar codigo duplicado en la validacion
-const getTodo = async (id: string): Promise<todo | null> => {
+const getTodo = async (id: string): Promise<Todo | null> => {
   const todo = await prisma.todo.findFirst({
     where: { id },
   });
@@ -53,7 +53,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
   if (!todo) {
     return NextResponse.json(
-      { message: `Todo whit id ${id} not found` },
+      { message: `Todo with id ${id} not found` },
       { status: 404 }
     );
   }
