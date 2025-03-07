@@ -3,28 +3,22 @@ import prisma from "@/lib/prisma";
 import { Todo } from "@prisma/client";
 import * as yup from "yup";
 
-interface Params {
-  params: {
-    id: string;
-  };
-}
-
-//Fucion para evitar codigo duplicado en la validacion
+// Función para evitar código duplicado en la validación
 const getTodo = async (id: string): Promise<Todo | null> => {
-  const todo = await prisma.todo.findFirst({
-    where: { id },
-  });
-  return todo;
+  return await prisma.todo.findFirst({ where: { id } });
 };
 
-export async function GET(request: NextRequest, { params }: Params) {
+export async function GET(
+  request: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
-    const { id } = params;
-    const todo = getTodo(params.id);
+    const { id } = context.params;
+    const todo = await getTodo(id); // Asegurar el uso de await
 
     if (!todo) {
       return NextResponse.json(
-        { message: `Todo whit id ${id} not found` },
+        { message: `Todo with id ${id} not found` },
         { status: 404 }
       );
     }
@@ -39,17 +33,21 @@ export async function GET(request: NextRequest, { params }: Params) {
   }
 }
 
-//Schema Validator para el PUT con YUP
+// Schema Validator para el PUT con YUP
 const putSchema = yup.object({
   complete: yup.boolean().optional(),
   description: yup.string().optional(),
 });
 
-//PUT by ID
-export async function PUT(request: NextRequest, { params }: Params) {
-  const id = params.id;
-  //Obtengo el todo aqui solo para verificar que exista y no intentar actualizar un todo que no existe
-  const todo = await getTodo(params.id);
+// PUT by ID
+export async function PUT(
+  request: NextRequest,
+  context: { params: { id: string } }
+) {
+  const id = context.params.id;
+
+  // Verificar que el TODO existe antes de actualizarlo
+  const todo = await getTodo(id);
 
   if (!todo) {
     return NextResponse.json(
@@ -59,14 +57,11 @@ export async function PUT(request: NextRequest, { params }: Params) {
   }
 
   try {
-    //En el PUT se espera que se envíe un body con los campos que se quieren actualizar
-    //En este caso se espera que se envíe un body con los campos complete y description, el ...rest son otros campos que no se van a actualizar, en este caso no hay otros campos
-    const { complete, description, ...rest } = await putSchema.validate(
+    const { complete, description } = await putSchema.validate(
       await request.json()
     );
-    console.log("REST", rest);
 
-    //Actualizando todo
+    // Actualizando todo
     const updatedTodo = await prisma.todo.update({
       where: { id },
       data: {
@@ -78,6 +73,6 @@ export async function PUT(request: NextRequest, { params }: Params) {
     return NextResponse.json(updatedTodo);
   } catch (error) {
     console.error(error);
-    return NextResponse.json(error, { status: 400 });
+    return NextResponse.json({ error: error }, { status: 400 });
   }
 }
