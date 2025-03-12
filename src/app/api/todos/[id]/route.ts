@@ -8,13 +8,13 @@ const getTodo = async (id: string): Promise<Todo | null> => {
   return await prisma.todo.findFirst({ where: { id } });
 };
 
-// ✅ GET actualizado
+// ✅ GET final corregido
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = context.params;
+    const { id } = params;
     const todo = await getTodo(id);
 
     if (!todo) {
@@ -43,9 +43,9 @@ const putSchema = yup.object({
 // ✅ PUT actualizado
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = context.params;
+  const { id } = params;
 
   // Verificar que el TODO existe antes de actualizarlo
   const todo = await getTodo(id);
