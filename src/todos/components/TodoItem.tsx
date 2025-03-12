@@ -10,13 +10,7 @@ interface Props {
 
 const TodoItem = ({ todo, toogleTodo }: Props) => {
   return (
-    <div
-      className={`${
-        todo?.complete
-          ? "line-through bg-blue-50 rounded-lg shadow-sm p-5 border-dashed border border-blue-500 flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0"
-          : "bg-red-50 rounded-lg shadow-sm p-5 border-dashed border border-red-500 flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0"
-      }`}
-    >
+    <div className={`${todo?.complete ? "todoDone" : "todoPending"}`}>
       <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
         <div
           onClick={() => toogleTodo(todo?.id || "", !todo?.complete)}
