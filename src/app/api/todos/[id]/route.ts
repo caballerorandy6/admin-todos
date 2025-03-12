@@ -3,21 +3,19 @@ import prisma from "@/lib/prisma";
 import { Todo } from "@prisma/client";
 import * as yup from "yup";
 
+// Función para evitar código duplicado en la validación
 const getTodo = async (id: string): Promise<Todo | null> => {
   return await prisma.todo.findFirst({ where: { id } });
 };
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
+export async function GET(context: { params: { id: string } }) {
   try {
-    const todo = await getTodo(id);
+    const { id } = context.params;
+    const todo = await getTodo(id); // Asegurar el uso de await
 
     if (!todo) {
       return NextResponse.json(
-        { message: `Todo con id ${id} no encontrado` },
+        { message: `Todo with id ${id} not found` },
         { status: 404 }
       );
     }
@@ -25,39 +23,48 @@ export async function GET(
     return NextResponse.json(todo);
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Algo salió mal" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
   }
 }
 
+// Schema Validator para el PUT con YUP
 const putSchema = yup.object({
   complete: yup.boolean().optional(),
   description: yup.string().optional(),
 });
 
+// PUT by ID
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const { id } = params;
+  const id = context.params.id;
 
+  // Verificar que el TODO existe antes de actualizarlo
   const todo = await getTodo(id);
 
   if (!todo) {
     return NextResponse.json(
-      { message: `Todo con id ${id} no encontrado` },
+      { message: `Todo with id ${id} not found` },
       { status: 404 }
     );
   }
 
   try {
-    const body = await request.json();
-    await putSchema.validate(body);
+    const { complete, description } = await putSchema.validate(
+      await request.json()
+    );
 
-    const { complete, description } = body;
-
+    // Actualizando todo
     const updatedTodo = await prisma.todo.update({
       where: { id },
-      data: { complete, description },
+      data: {
+        complete,
+        description,
+      },
     });
 
     return NextResponse.json(updatedTodo);
