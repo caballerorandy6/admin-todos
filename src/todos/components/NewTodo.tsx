@@ -2,27 +2,38 @@
 
 import { useState } from "react";
 import { IoTrashOutline } from "react-icons/io5";
-import { createTodo } from "@/todos/helpers/todos";
-import { useRouter } from "next/navigation";
-import { deletedTodos } from "@/todos/helpers/todos";
+//import { createTodo } from "@/todos/helpers/todos";
+//import { useRouter } from "next/navigation";
+//import { deletedTodos } from "@/todos/helpers/todos";
+import { addTodo } from "@/todos/actions/todo-actions";
+import { deleteCompleted } from "@/todos/actions/todo-actions";
 
 export const NewTodo = () => {
   const [description, setDescription] = useState("");
 
-  const router = useRouter();
+  //const router = useRouter();
 
-  const deleteCompleted = async () => {
-    await deletedTodos();
-    router.refresh();
-  };
+  // Asi se borra utilizando la API
+  // const deleteCompleted = async () => {
+  //   await deletedTodos();
+  //   router.refresh();
+  // };
 
+  //Asi se crea un Todo utilizando la API
+  // const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   if (description.trim().length === 0) return;
+  //   const newTodo = await createTodo(description);
+  //   setDescription("");
+  //   router.refresh();
+  //   return newTodo;
+  // };
+
+  //Creando Todo utilizando ServerActions
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (description.trim().length === 0) return;
-    const newTodo = await createTodo(description);
+    await addTodo(description);
     setDescription("");
-    router.refresh();
-    return newTodo;
   };
 
   return (
@@ -45,7 +56,7 @@ export const NewTodo = () => {
       <span className="flex flex-1"></span>
 
       <button
-        onClick={() => deleteCompleted()}
+        onClick={() => deleteCompleted()} //OJO => Se debe enviar asi el onClick de los serverActions onClick={() => deleteCompleted()} si no da error
         type="button"
         className="flex items-center justify-center rounded ml-2 cursor-pointer bg-red-400 p-2 text-white hover:bg-red-700 transition-all"
       >

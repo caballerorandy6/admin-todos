@@ -8,12 +8,10 @@ const getTodo = async (id: string): Promise<Todo | null> => {
   return await prisma.todo.findFirst({ where: { id } });
 };
 
-// ✅ GET corregido
-export async function GET(request: NextRequest, params: { id: string }) {
-  const { id } = params;
-
+export async function GET(context: { params: { id: string } }) {
   try {
-    const todo = await getTodo(id);
+    const { id } = context.params;
+    const todo = await getTodo(id); // Asegurar el uso de await
 
     if (!todo) {
       return NextResponse.json(
@@ -32,15 +30,18 @@ export async function GET(request: NextRequest, params: { id: string }) {
   }
 }
 
-// ✅ Schema Validator para el PUT con YUP
+// Schema Validator para el PUT con YUP
 const putSchema = yup.object({
   complete: yup.boolean().optional(),
   description: yup.string().optional(),
 });
 
-// ✅ PUT corregido
-export async function PUT(request: NextRequest, params: { id: string }) {
-  const { id } = params;
+// PUT by ID
+export async function PUT(
+  request: NextRequest,
+  context: { params: { id: string } }
+) {
+  const id = context.params.id;
 
   // Verificar que el TODO existe antes de actualizarlo
   const todo = await getTodo(id);
@@ -60,7 +61,10 @@ export async function PUT(request: NextRequest, params: { id: string }) {
     // Actualizando todo
     const updatedTodo = await prisma.todo.update({
       where: { id },
-      data: { complete, description },
+      data: {
+        complete,
+        description,
+      },
     });
 
     return NextResponse.json(updatedTodo);
