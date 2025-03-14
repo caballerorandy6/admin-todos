@@ -1,10 +1,10 @@
 import { Todo } from "@prisma/client";
 
-export const sleep = (seconds: number = 0): Promise<boolean> => {
+export const sleep = (): Promise<boolean> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(true);
-    }, seconds * 1000);
+    }, 3000);
   });
 };
 
@@ -16,7 +16,7 @@ export const updateTodo = async (
   // En el body envio la propiedad complete que quiero modificar en el todo
 
   //Funcion que demora dos segundos el update intencionalmente para trabajar con la Actualizacion Optimista
-  await sleep(2);
+  await sleep();
 
   const body = { complete };
 

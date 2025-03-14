@@ -1,3 +1,8 @@
+//Utilizar esto para revalidar la Data en TODA pagina, layout o Ruta
+//Muy bueno cuando se necesita actualizar la data en tiempo real en Server Actions
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import prisma from "@/lib/prisma";
 import { NewTodo } from "@/todos/components/NewTodo";
 import TodosGrid from "@/todos/components/TodosGrid";

@@ -8,7 +8,10 @@ const getTodo = async (id: string): Promise<Todo | null> => {
   return await prisma.todo.findFirst({ where: { id } });
 };
 
-export async function GET(context: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
     const { id } = context.params;
     const todo = await getTodo(id); // Asegurar el uso de await

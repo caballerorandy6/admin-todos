@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { Todo } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { sleep } from "@/todos/helpers/todos";
 
 //Crear un Todo
 export const addTodo = async (
@@ -25,6 +26,8 @@ export const toogleTodo = async (
   id: string,
   complete: boolean
 ): Promise<Todo> => {
+  await sleep();
+
   const todo = await prisma.todo.findFirst({ where: { id } });
 
   if (!todo) {
