@@ -9,11 +9,8 @@ const getTodo = async (id: string): Promise<Todo | null> => {
 };
 
 // ✅ GET corregido
-export async function GET(
-  request: NextRequest,
-  context: { params: { id: string } }
-) {
-  const { id } = context.params;
+export async function GET(request: NextRequest, params: { id: string }) {
+  const { id } = params;
 
   try {
     const todo = await getTodo(id);
@@ -42,11 +39,8 @@ const putSchema = yup.object({
 });
 
 // ✅ PUT corregido
-export async function PUT(
-  request: NextRequest,
-  context: { params: { id: string } }
-) {
-  const { id } = context.params;
+export async function PUT(request: NextRequest, params: { id: string }) {
+  const { id } = params;
 
   // Verificar que el TODO existe antes de actualizarlo
   const todo = await getTodo(id);
